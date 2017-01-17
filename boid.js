@@ -9,15 +9,18 @@
 // Boid class
 // Methods for Separation, Cohesion, Alignment added
 
-function Boid(x,y) {
-  this.acceleration = createVector(0,0)
-  this.velocity = createVector(random(-1,1),random(-1,1))
-  this.position = createVector(x,y)
-  this.r = 3.0
-  this.maxspeed = 3    // Maximum speed
-    this.maxforce = 0.05 // Maximum steering force
+class Boid {
 
-  this.run = function(boids) {
+  constructor (x, y) {
+    this.acceleration = createVector(0,0)
+    this.velocity = createVector(random(-1,1),random(-1,1))
+    this.position = createVector(x,y)
+    this.r = 3.0
+    this.maxspeed = 3    // Maximum speed
+      this.maxforce = 0.05 // Maximum steering force
+  }
+
+  run (boids) {
     this.flock(boids)
     this.update()
     this.borders()
@@ -25,9 +28,9 @@ function Boid(x,y) {
   }
 
   // We accumulate a new acceleration each time based on three rules
-  this.flock = function(boids) {
+  flock (boids) {
     var separation = this.separate(boids)   // Separation
-    var alignment = this.align(boids)      // Alignment
+    var alignment = this.newAlign(boids)      // Alignment
     var cohesion = this.cohesion(boids)   // Cohesion
     // Arbitrarily weight these forces
     separation.mult(1.5)
@@ -39,13 +42,13 @@ function Boid(x,y) {
     this.applyForce(cohesion)
   }
 
-  this.applyForce = function(force) {
+  applyForce (force) {
     // We could add mass here if we want A = F / M
     this.acceleration.add(force)
   }
 
   // Method to update location
-  this.update = function() {
+  update () {
     // Update velocity
     this.velocity.add(this.acceleration)
     // Limit speed
@@ -55,7 +58,7 @@ function Boid(x,y) {
     this.acceleration.mult(0)
   };
 
-  this.render = function() {
+  render () {
     // Draw a triangle rotated in the direction of velocity
     var theta = this.velocity.heading() + radians(90)
     fill(200, 200, 200, 100)
@@ -72,7 +75,7 @@ function Boid(x,y) {
   };
 
   // Wraparound
-  this.borders = function() {
+  borders () {
     if (this.position.x < -this.r)  this.position.x = width +this.r
     if (this.position.y < -this.r)  this.position.y = height+this.r
     if (this.position.x > width +this.r) this.position.x = -this.r
@@ -81,7 +84,7 @@ function Boid(x,y) {
 
   // Separation
   // Method checks for nearby boids and steers away
-  this.separate = function(boids) {
+  separate (boids) {
     var desiredseparation = 25.0
     var steer = createVector(0,0)
     var count = 0
@@ -116,7 +119,7 @@ function Boid(x,y) {
 
   // Alignment
   // For every nearby boid in the system, calculate the average velocity
-  this.align = function(boids) {
+  align (boids) {
     var neighbordist = 50
     var sum = createVector(0,0)
     var count = 0
@@ -139,22 +142,51 @@ function Boid(x,y) {
     }
   };
 
-  // Cohesion
-  // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-  this.cohesion = function (boids) {
-    let neighborDisance = 50,
-      neighborCount = 0
+  newAlign (boids) {
+    let neighborDistance = 50
 
-    let neighbors = boids.filter((boid) => {
+    let neighbors = boids.filter(boid => {
       let distance = p5.Vector.dist(this.position, boid.position)
-      return (distance < 50)
+
+      return distance < 50
     })
 
     if (neighbors.length === 0) return new p5.Vector(0, 0)
 
-    let sum = neighbors.reduce((vector, neighbor) => {
-      return p5.Vector.add(vector, neighbor.position)
-    }, new p5.Vector(0, 0))
+    let sum = neighbors.reduce((velocity, neighbor) =>
+      p5.Vector.add(velocity, neighbor.velocity)
+    , new p5.Vector(0, 0))
+
+
+    let average = sum.div(neighbors.length)
+
+    average.normalize().
+      mult(this.maxspeed)
+
+    let steer = p5.Vector.sub(average, this.velocity).
+      limit(this.maxforce)
+
+    return steer
+
+  }
+
+  // Cohesion
+  // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
+  cohesion (boids) {
+    let neighborDisance = 50,
+      neighborCount = 0
+
+    let neighbors = boids.filter(boid => {
+      let distance = p5.Vector.dist(this.position, boid.position)
+
+      return distance < 50
+    })
+
+    if (neighbors.length === 0) return new p5.Vector(0, 0)
+
+    let sum = neighbors.reduce((location, neighbor) =>
+      p5.Vector.add(location, neighbor.position)
+    , new p5.Vector(0, 0))
 
     return this.seek(sum.div(neighbors.length))
 
@@ -162,14 +194,14 @@ function Boid(x,y) {
 
   // A method that calculates and applies a steering force towards a target
   // STEER = DESIRED MINUS VELOCITY
-  this.seek = function(target) {
-    var desired = p5.Vector.sub(target,this.position)  // A vector pointing from the location to the target
-    // Normalize desired and scale to maximum speed
-    desired.normalize()
-    desired.mult(this.maxspeed)
-    // Steering = Desired minus Velocity
-    var steer = p5.Vector.sub(desired,this.velocity)
-    steer.limit(this.maxforce)  // Limit to maximum steering force
+  seek (target) {
+    let desired = p5.Vector.sub(target, this.position).
+      normalize().
+      mult(this.maxspeed)
+
+    let steer = p5.Vector.sub(desired, this.velocity).
+      limit(this.maxforce)
+
     return steer
-  };
+  }
 }
