@@ -89,8 +89,7 @@ class Boid {
     // Renorm it to the max speed
     // Then *subtract* it from the current velocity (steer away!)
     // And then limit it to the maximum force I'll feel
-    steerAway.div(tooCloseNeighbors.length)
-      .normalize()
+    steerAway.normalize()
       .mult(this.maxSpeed)
       .sub(this.velocity)
       .limit(this.maxForce)
@@ -146,7 +145,7 @@ class Boid {
     return boids.filter(boid => {
       let distance = p5.Vector.dist(this.position, boid.position)
 
-      return distance > 0 && distance < withinDistance
+      return boid !== this && distance < withinDistance
     })
   }
 
