@@ -44,7 +44,7 @@ module.exports = {
         "consistent-this": "error",
         "curly": "off",
         "default-case": "error",
-        "dot-location": "error",
+        "dot-location": ["error", "property"],
         "dot-notation": "error",
         "eol-last": "error",
         "eqeqeq": "error",
@@ -66,7 +66,7 @@ module.exports = {
         "id-length": "off",
         "id-match": "error",
         "indent": "off",
-        "init-declarations": "error",
+        "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "error",
         "keyword-spacing": [
