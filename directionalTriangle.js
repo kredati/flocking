@@ -1,6 +1,7 @@
 'use strict'
 
 // Draws a triangle of specified size, pointing in the specified heading
+// Factors out the complexity of drawing Boids
 class DirectionalTriangle {
 
   constructor (radius) {
