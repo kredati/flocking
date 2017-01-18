@@ -101,7 +101,7 @@ class Boid {
 
     if (neighbors.length === 0) return new p5.Vector(0, 0)
 
-    let averageVelocity = Boid.calculateAverageOf(neighbors, 'velocity')
+    let averageVelocity = Boid.averageOf(neighbors, 'velocity')
 
     averageVelocity.normalize()
       .mult(this.maxSpeed)
@@ -120,7 +120,7 @@ class Boid {
 
     if (neighbors.length === 0) return new p5.Vector(0, 0)
 
-    let averagePosition = Boid.calculateAverageOf(neighbors, 'position')
+    let averagePosition = Boid.averageOf(neighbors, 'position')
 
     let desired = p5.Vector.sub(averagePosition, this.position)
       .normalize()
@@ -141,7 +141,7 @@ class Boid {
     })
   }
 
-  static calculateAverageOf(boids, property) {
+  static averageOf(boids, property) {
     if (!boids.length) return new p5.Vector(0, 0)
 
     let vectors = boids.map(boid => boid[property])
