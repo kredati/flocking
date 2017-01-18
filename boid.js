@@ -1,18 +1,16 @@
 'use strict'
 
-// Lightly adapted (ongoing work) by Scott Richmond from:
+// Lightly adapted by Scott Richmond from:
 
 // The Nature of Code
 // Daniel Shiffman
 // http://natureofcode.com
 
 // Boid class
-// Methods for Separation, Cohesion, Alignment added
 
 class Boid {
 
   constructor (x, y) {
-    // this.acceleration = createVector(0, 0)
     this.position = createVector(x, y)
 
     this.velocity = createVector(random(-1, 1), random(-1, 1))
@@ -84,11 +82,7 @@ class Boid {
       return p5.Vector.add(away, difference)
     }, new p5.Vector(0, 0))
 
-    // Once we get that vector, we have a great deal more math to do
-    // Divide it over the number of too close neighbors
-    // Renorm it to the max speed
-    // Then *subtract* it from the current velocity (steer away!)
-    // And then limit it to the maximum force I'll feel
+    // Once we get that vector, we have some more math to do
     steerAway.normalize()
       .mult(this.maxSpeed)
       .sub(this.velocity)
