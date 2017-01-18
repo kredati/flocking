@@ -38,8 +38,8 @@ class Boid {
       neighborDistance = 50,
       tooCloseDistance = 25
 
-    let neighbors = this.getBoidsWithin(boids, neighborDistance)
-    let tooClose = this.getBoidsWithin(neighbors, tooCloseDistance)
+    let neighbors = this.getBoidsWithin(boids, neighborDistance),
+      tooClose = this.getBoidsWithin(neighbors, tooCloseDistance)
 
     let separation = this.separateFrom(tooClose).mult(1.5),
       alignment = this.alignWith(neighbors).mult(1.0),
