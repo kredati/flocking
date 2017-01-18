@@ -35,9 +35,15 @@ class Boid {
   // We accumulate a new acceleration each time based on three rules
   flockingWith (boids) {
     let acceleration = new p5.Vector(0, 0),
-      separation = this.separateFrom(boids).mult(1.5),
-      alignment = this.alignWith(boids).mult(1.0),
-      cohesion = this.cohereWith(boids).mult(1.0)
+      neighborDistance = 50,
+      tooCloseDistance = 25
+
+    let neighbors = this.getBoidsWithin(boids, neighborDistance)
+    let tooClose = this.getBoidsWithin(neighbors, tooCloseDistance)
+
+    let separation = this.separateFrom(tooClose).mult(1.5),
+      alignment = this.alignWith(neighbors).mult(1.0),
+      cohesion = this.cohereWith(neighbors).mult(1.0)
 
     // Add the force vectors to acceleration
     return acceleration.add(separation)
@@ -63,16 +69,13 @@ class Boid {
 
   // Separation
   // Method checks for nearby boids and steers away
-  separateFrom (boids) {
-    let desiredSeparation = 25
+  separateFrom (tooClose) {
 
-    let tooCloseNeighbors = this.getNeighbors(boids, desiredSeparation)
-
-    if (tooCloseNeighbors.length === 0) return new p5.Vector(0, 0)
+    if (tooClose.length === 0) return new p5.Vector(0, 0)
 
     // Create a single vector that steers away from too closeness,
     // but weights according to the *inverse* of the distance
-    let steerAway = tooCloseNeighbors.reduce((away, neighbor) => {
+    let steerAway = tooClose.reduce((away, neighbor) => {
       let difference = p5.Vector.sub(this.position, neighbor.position),
         distance = difference.mag()
 
@@ -94,10 +97,7 @@ class Boid {
 
   // Alignment
   // For every nearby boid in the system, calculate the average velocity
-  alignWith (boids) {
-    let neighborDistance = 50
-
-    let neighbors = this.getNeighbors(boids, neighborDistance)
+  alignWith (neighbors) {
 
     if (neighbors.length === 0) return new p5.Vector(0, 0)
 
@@ -116,9 +116,7 @@ class Boid {
   // Cohesion
   // For the average location (i.e. center) of all nearby boids,
   // calculate steering vector towards that location
-  cohereWith (boids) {
-    let neighborDistance = 50,
-      neighbors = this.getNeighbors(boids, neighborDistance)
+  cohereWith (neighbors) {
 
     if (neighbors.length === 0) return new p5.Vector(0, 0)
 
@@ -135,7 +133,7 @@ class Boid {
 
   }
 
-  getNeighbors (boids, withinDistance) {
+  getBoidsWithin (boids, withinDistance) {
     return boids.filter(boid => {
       let distance = p5.Vector.dist(this.position, boid.position)
 
