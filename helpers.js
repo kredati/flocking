@@ -4,6 +4,7 @@
 Object.assign(Number.prototype, {
   times (f) {
     let that = this
+
     while (that--) f()
   }
 })

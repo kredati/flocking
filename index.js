@@ -12,14 +12,19 @@
 
 'use strict'
 
+let counter
+
 var flock = []
 
 var setup = () => {
   createCanvas(800, 600)
 
-  let text = createP('Drag the mouse to generate new boids.')
+  let instructions = createP('Drag the mouse to generate new boids.')
 
-  text.position(10, 600)
+  counter = createP('There are 60 boids.')
+
+  instructions.position(10, 600)
+  counter.position(600, 600)
 
   60..times(() => flock.push(new Boid(width/2, height/2)))
 }
@@ -31,5 +36,7 @@ var draw = () => {
 
 // Add a new boid into the System
 var mouseDragged = () => {
-  flock.push(new Boid(mouseX, mouseY));
+  flock.push(new Boid(mouseX, mouseY))
+
+  counter.html(`There are ${flock.length} boids.`)
 }
