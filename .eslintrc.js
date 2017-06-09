@@ -9,7 +9,7 @@ module.exports = {
         "array-bracket-spacing": "error",
         "array-callback-return": "error",
         "arrow-body-style": "error",
-        "arrow-parens": ["error", "as-needed"],
+        "arrow-parens": ["error", "always"],
         "arrow-spacing": [
             "error",
             {
@@ -192,9 +192,9 @@ module.exports = {
         "no-warning-comments": "error",
         "no-whitespace-before-property": "error",
         "no-with": "error",
-        "object-curly-newline": "error",
-        "object-curly-spacing": "error",
-        "object-property-newline": "error",
+        "object-curly-newline": "off",
+        "object-curly-spacing": "off",
+        "object-property-newline": "off",
         "object-shorthand": "error",
         "one-var": "off",
         "one-var-declaration-per-line": "error",

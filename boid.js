@@ -46,7 +46,8 @@ class Boid {
       cohesion = this.cohereWith(neighbors).mult(1.0)
 
     // Add the force vectors to acceleration
-    return acceleration.add(separation)
+    return acceleration
+      .add(separation)
       .add(alignment)
       .add(cohesion)
   }
